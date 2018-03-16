@@ -2,6 +2,10 @@ import abc
 from enum import Enum
 import os
 import tensorflow as tf
+
+# From tensorflow/models/research/slim/deployment
+from deployment import model_deploy
+
 from .flowlib import flow_to_image, write_flow
 import numpy as np
 from scipy.misc import imread, imsave
