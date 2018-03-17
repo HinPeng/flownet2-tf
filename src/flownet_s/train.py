@@ -3,6 +3,10 @@ from ..dataset_configs import FLYING_CHAIRS_DATASET_CONFIG
 from ..training_schedules import LONG_SCHEDULE
 from .flownet_s import FlowNetS
 
+import tensorflow as tf
+from deployment import model_deploy
+slim = tf.contrib.slim
+
 tf.app.flags.DEFINE_integer('num_clones', 1,
                             'Number of model clones to deploy.')
 
@@ -49,6 +53,9 @@ with tf.Graph().as_default():
 
     # Load a batch of data
     input_a, input_b, flow = load_batch(FLYING_CHAIRS_DATASET_CONFIG, 'sample', net.global_step)
+
+    batch_queue = slim.prefetch_queue.prefetch_queue(
+                    [input_a, input_b, flow], capacity=2 * deploy_config.num_clones)
 
     # Train on the data
     net.train(

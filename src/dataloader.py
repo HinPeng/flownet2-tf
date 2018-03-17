@@ -321,20 +321,20 @@ def load_batch(dataset_config, split_name, global_step):
             flows = _preprocessing_ops.flow_augmentation(
                 flows, transforms_from_a, transforms_from_b, crop)
 
-            #return tf.train.batch([image_as, image_bs, flows],
-            #                      enqueue_many=True,
-            #                      batch_size=dataset_config['BATCH_SIZE'],
-            #                      capacity=dataset_config['BATCH_SIZE'] * 4,
-            #                      num_threads=num_threads,
-            #                      allow_smaller_final_batch=False)
-
-            # Modified for Multi-GPU training
-            input_a, input_b, flow = tf.train.batch([image_as, image_bs, flows],
+            return tf.train.batch([image_as, image_bs, flows],
                                   enqueue_many=True,
                                   batch_size=dataset_config['BATCH_SIZE'],
                                   capacity=dataset_config['BATCH_SIZE'] * 4,
                                   num_threads=num_threads,
-                                  allow_smaller_final_batch=False)    
-            
-            return slim.prefetch_queue.prefetch_queue(
-                [input_a, input_b, flow], capacity=2 * deploy_config.num_clones)
+                                  allow_smaller_final_batch=False)
+
+            # Modified for Multi-GPU training
+            #input_a, input_b, flow = tf.train.batch([image_as, image_bs, flows],
+            #                      enqueue_many=True,
+            #                      batch_size=dataset_config['BATCH_SIZE'],
+            #                      capacity=dataset_config['BATCH_SIZE'] * 4,
+            #                      num_threads=num_threads,
+            #                      allow_smaller_final_batch=False)    
+            #
+            #return slim.prefetch_queue.prefetch_queue(
+            #    [input_a, input_b, flow], capacity=2 * deploy_config.num_clones)
