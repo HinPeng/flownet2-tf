@@ -2,10 +2,10 @@ from ..dataloader import load_batch
 from ..dataset_configs import FLYING_CHAIRS_DATASET_CONFIG
 from ..training_schedules import LONG_SCHEDULE
 from .flownet_s import FlowNetS
-from .flowlib import flow_to_image, write_flow
+from ..flowlib import flow_to_image, write_flow
 
 import tensorflow as tf
-from deployment import model_deploy
+from ..deployment import model_deploy
 slim = tf.contrib.slim
 
 tf.app.flags.DEFINE_integer('num_clones', 1,
@@ -102,6 +102,7 @@ with tf.Graph().as_default():
 
     slim.learning.train(model_dp.train_op, 
                         log_dir,
+                        session_config=tf.ConfigProto(allow_soft_placement=True),
                         number_of_steps=training_schedule['max_iter'])
     # Train on the data
     #net.train(
