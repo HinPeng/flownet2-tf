@@ -82,9 +82,9 @@ class Net(object):
                 full_out_path = os.path.join(out_path, unique_name + '.flo')
                 write_flow(pred_flow, full_out_path)
 
-    def train(self, log_dir, training_schedule, input_a, input_b, flow, checkpoints=None):
-        tf.summary.image("image_a", input_a, max_outputs=2)
-        tf.summary.image("image_b", input_b, max_outputs=2)
+    def train(self, log_dir, training_schedule, batch_queue, checkpoints=None):
+        #tf.summary.image("image_a", input_a, max_outputs=2)
+        #tf.summary.image("image_b", input_b, max_outputs=2)
 
         self.learning_rate = tf.train.piecewise_constant(
             self.global_step,
@@ -96,11 +96,11 @@ class Net(object):
             training_schedule['momentum'],
             training_schedule['momentum2'])
 
-        inputs = {
-            'input_a': input_a,
-            'input_b': input_b,
-        }
-        predictions = self.model(inputs, training_schedule)
+        #inputs = {
+        #    'input_a': input_a,
+        #    'input_b': input_b,
+        #}
+        predictions = self.model(batch_queue, training_schedule)
         total_loss = self.loss(flow, predictions)
         tf.summary.scalar('loss', total_loss)
 
