@@ -46,8 +46,8 @@ with tf.Graph().as_default():
         num_ps_tasks=FLAGS.num_ps_tasks)
 
     # Create global_step
-    #with tf.device(deploy_config.variables_device()):
-    #  global_step = slim.create_global_step()
+    with tf.device(deploy_config.variables_device()):
+      global_step = slim.create_global_step()
 
     # Create a new network
     net = FlowNetS()
@@ -55,19 +55,19 @@ with tf.Graph().as_default():
     log_dir='./logs/flownet_s_sample'
 
     # Load a batch of data
-    input_a, input_b, flow = load_batch(FLYING_CHAIRS_DATASET_CONFIG, 'sample', net.global_step)
+    input_a, input_b, flow = load_batch(FLYING_CHAIRS_DATASET_CONFIG, 'sample', global_step)
 
     batch_queue = slim.prefetch_queue.prefetch_queue(
                     [input_a, input_b, flow], capacity=2 * deploy_config.num_clones)
 
     # Define the optimizer
-    net.learning_rate = tf.train.piecewise_constant(
-        net.global_step,
+    learning_rate = tf.train.piecewise_constant(
+        global_step,
         [tf.cast(v, tf.int64) for v in training_schedule['step_values']],
         training_schedule['learning_rates'])
 
     optimizer = tf.train.AdamOptimizer(
-        net.learning_rate,
+        learning_rate,
         training_schedule['momentum'],
         training_schedule['momentum2'])
 
@@ -106,7 +106,7 @@ with tf.Graph().as_default():
     slim.learning.train(model_dp.train_op, 
                         log_dir,
                         session_config=config,
-                        global_step=net.global_step,
+                        global_step=global_step,
                         save_summaries_secs=60,
                         number_of_steps=training_schedule['max_iter'])
     # Train on the data
