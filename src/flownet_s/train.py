@@ -100,9 +100,14 @@ with tf.Graph().as_default():
 
     model_dp = model_deploy.deploy(deploy_config, model_fn, [batch_queue], optimizer=optimizer)
 
+    config=tf.ConfigProto()
+    config.allow_soft_placement = True
+    config.gpu_options.allow_growth = True
     slim.learning.train(model_dp.train_op, 
                         log_dir,
-                        session_config=tf.ConfigProto(allow_soft_placement=True),
+                        session_config=config,
+                        global_step=net.global_step,
+                        save_summaries_secs=60,
                         number_of_steps=training_schedule['max_iter'])
     # Train on the data
     #net.train(

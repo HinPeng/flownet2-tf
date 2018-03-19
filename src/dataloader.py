@@ -221,7 +221,7 @@ def _generate_coeff(param, discount_coeff=tf.constant(1.0), default_value=tf.con
 
 
 def load_batch(dataset_config, split_name, global_step):
-    num_threads = 32
+    num_threads = 56
     reader_kwargs = {'options': tf.python_io.TFRecordOptions(
         tf.python_io.TFRecordCompressionType.ZLIB)}
 
