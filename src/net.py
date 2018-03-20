@@ -23,7 +23,7 @@ class Net(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, mode=Mode.TRAIN, debug=False):
-        #self.global_step = slim.get_or_create_global_step()
+        self.global_step = slim.get_or_create_global_step()
         self.mode = mode
         self.debug = debug
 
