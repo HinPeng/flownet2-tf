@@ -107,7 +107,7 @@ with tf.Graph().as_default():
                         log_dir,
                         session_config=config,
                         global_step=net.global_step,
-                        save_summaries_secs=60,
+                        save_summaries_secs=5,
                         number_of_steps=training_schedule['max_iter'])
     # Train on the data
     #net.train(
